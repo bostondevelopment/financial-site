@@ -319,9 +319,21 @@
       <section>
         <h2>What I owned</h2>
         <p>
-          These are the systems I built and owned, defensible from the commit
-          history:
+          I built the platform from its foundation up, and owned the systems
+          that carry its hardest work:
         </p>
+        <div class="engine green">
+          <span class="engine-num">Foundation</span>
+          <h3>Stood up the application and its infrastructure from scratch</h3>
+          <p>
+            I created the platform — the initial Django application, its settings
+            and service-layer structure, and the containerized infrastructure
+            around it: the Dockerfile for the full GIS toolchain and the Compose
+            stack wiring web, workers, Redis, and the PostGIS database. The
+            foundation the rest of the system was built on, not features layered
+            onto someone else's scaffold.
+          </p>
+        </div>
         <div class="engine green">
           <span class="engine-num">Async pipeline</span>
           <h3>The fan-out / fan-in report DAG</h3>
@@ -362,11 +374,12 @@
           </p>
         </div>
         <p>
-          Alongside that: a Django 5.1 / Python 3.12 upgrade, the strict Ruff
-          ruleset and test harness, production observability (the Slack handler,
-          statsd client, and request-ID propagation), and a pipeline-latency pass
-          that returned the API response before the async chain runs and killed
-          N+1 queries with <code>select_related</code>.
+          Alongside that: later carrying the codebase through a Django 5.1 /
+          Python 3.12 upgrade, the strict Ruff ruleset and test harness,
+          production observability (the Slack handler, statsd client, and
+          request-ID propagation), and a pipeline-latency pass that returned the
+          API response before the async chain runs and killed N+1 queries with
+          <code>select_related</code>.
         </p>
       </section>
 
