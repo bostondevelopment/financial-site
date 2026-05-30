@@ -26,8 +26,6 @@ I stood up the platform's foundation and owned its hardest systems:
 - **Entity resolution under concurrency.** Normalization + fuzzy matching across ~10 sources, resolved under `select_for_update` + `get_or_create`, so concurrent workers converge on one canonical company or person.
 - **FinOps + lifecycle.** Token-level model-cost tracking into a polymorphic usage log with an archival audit trail, and a report-expiration / subscription-refresh subsystem that auto-regenerates stale reports.
 
-Plus the strict Ruff ruleset and pytest harness, production observability (a Slack error handler with cloud-logging deep links, statsd metrics, request-ID propagation), and later carrying the codebase through a Django 5.1 / Python 3.12 upgrade.
-
 The **[engineering page](https://bostondevelopment.github.io/financial-site/engineering.html)** and **[AI page](https://bostondevelopment.github.io/financial-site/ai.html)** walk through all of it.
 
 ---
