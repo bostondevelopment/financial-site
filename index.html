@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Financial-Intelligence Platform — autonomous business intelligence for lenders</title>
+    <meta
+      name="description"
+      content="A production B2B financial-intelligence platform for banks and commercial lenders: a loan officer submits a business name and address, and the system autonomously assembles a single, scored, ~17-section intelligence report — ownership, financials, local-market position, secured-loan filings, and product fit."
+    />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <meta name="theme-color" content="#0D1B2E" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page wide">
+      <nav class="site-nav" aria-label="Primary">
+        <a class="nav-brand" href="index.html" aria-label="Home">
+          <span class="brand-mark">FI<span class="dot">.</span></span>
+          <span class="brand-text">Financial-Intelligence Platform</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html" class="active">Product</a>
+          <a href="engineering.html">Engineering</a>
+          <a href="ai.html">AI</a>
+        </div>
+      </nav>
+
+      <header class="hero">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <h1>A whole credit-intelligence team, in one request.</h1>
+            <p class="lede">
+              A loan officer submits a business name and address. The platform
+              autonomously assembles a single, scored, ~17-section intelligence
+              report on that business — who owns it, how it performs, how it
+              sits in its local market, what loans are already filed against it,
+              and which banking products it fits.
+            </p>
+            <div class="cta-row">
+              <a class="btn" href="engineering.html">How it's built →</a>
+              <a class="btn btn-secondary" href="ai.html">The AI inside →</a>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="diagram">
+              <p class="diagram-cap">Input → autonomous assembly → output</p>
+              <div class="flow">
+                <div class="step"><b>Business</b><small>name + address</small></div>
+                <span class="arrow">→</span>
+                <div class="step"><b>Async pipeline</b><small>~17 sections</small></div>
+                <span class="arrow">→</span>
+                <div class="step"><b>Scored report</b><small>composite Score</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- What it is ----------------------------------------------------- -->
+      <section>
+        <h2>What it is</h2>
+        <p>
+          A production B2B financial-intelligence platform for banks and
+          commercial lenders. A loan officer can't answer
+          <em>"is this business expanding, over-leveraged, and when should I
+          call them?"</em> from any single data feed. The platform fuses four
+          hard modalities onto one <span class="accent-b">Report</span> object —
+          regulatory filings, behavioral foot traffic, official geostatistics,
+          and unstructured web — then scores the result and recommends the
+          banking products the business is a fit for.
+        </p>
+        <p>
+          It isn't a dashboard bolted onto a data vendor. It's a complete
+          intelligence product: autonomous data assembly, deterministic scoring,
+          a controlled product-recommendation engine, and a full cost-and-audit
+          trail behind every report.
+        </p>
+      </section>
+
+      <!-- Who it's for --------------------------------------------------- -->
+      <section>
+        <h2>Who it's for</h2>
+        <div class="persona-grid">
+          <div class="persona">
+            <h3>Banks &amp; commercial lenders</h3>
+            <p>Each tenant is an institution carrying a credit limit, contract dates, and weekly report and pipeline limits — a hosted SaaS sold to lending institutions.</p>
+          </div>
+          <div class="persona">
+            <h3>Loan officers</h3>
+            <p>Submit a business and get back a scored, defensible report — plus prospecting pipelines that auto-discover comparable businesses nearby.</p>
+          </div>
+          <div class="persona">
+            <h3>Credit committees</h3>
+            <p>Every grade is computed by deterministic math against config thresholds, so a recommendation is auditable and defensible — not a black box.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Data fusion diagram -------------------------------------------- -->
+      <section>
+        <h2>Data fusion no single feed delivers</h2>
+        <p>
+          Four independent modalities are resolved, scored, and unified onto one
+          report. The value is the fusion: each source answers a different
+          question, and only together do they describe a business well enough to
+          lend against.
+        </p>
+        <div class="diagram">
+          <p class="diagram-cap">Four modalities · one Report object</p>
+          <div class="node-grid">
+            <div class="node"><b>Regulatory &amp; filings</b><small>firmographics · financials · UCC liens</small></div>
+            <div class="node"><b>Behavioral foot traffic</b><small>resident / worker / visitor demand</small></div>
+            <div class="node"><b>Official geostatistics</b><small>Census/ACS · BLS · BEA · NAICS</small></div>
+            <div class="node"><b>Unstructured web</b><small>news · search · owner profiles</small></div>
+          </div>
+          <div class="converge">↓ resolved, scored &amp; unified ↓</div>
+          <div class="dag">
+            <div class="rung">
+              <div class="node accent"><b>One scored Report</b><small>~17 sections · composite Score</small></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature: filings / engagement windows -------------------------- -->
+      <section class="feature-row">
+        <div class="feature-shot">
+          <div class="diagram">
+            <p class="diagram-cap">Secured-loan filings → engagement windows</p>
+            <div class="flow">
+              <div class="step"><b>Active lien</b><small>secured loan on file</small></div>
+              <span class="arrow">→</span>
+              <div class="step"><b>Lapse date</b><small>when financing expires</small></div>
+              <span class="arrow">→</span>
+              <div class="step"><b>6-month window</b><small>when to pitch</small></div>
+            </div>
+          </div>
+        </div>
+        <div class="feature-copy">
+          <h2>The sharpest commercial signal</h2>
+          <p>
+            UCC filings are public records of secured loans against a business's
+            assets — they reveal who has already lent to a business and
+            <em>when those liens lapse</em>. The platform turns that into
+            <span class="accent-b">engagement windows</span>: a six-month window
+            ending at each active lien's lapse date.
+          </p>
+          <p>
+            In other words, a calendar of exactly when a competitor's financing
+            expires and the bank should call to pitch refinancing — derived
+            automatically from multi-state public records.
+          </p>
+        </div>
+      </section>
+
+      <!-- The deterministic bridge --------------------------------------- -->
+      <section>
+        <h2>AI explains, but math decides</h2>
+        <p>
+          The headline composite Score and every sub-grade are computed
+          deterministically — averaging metrics against configured thresholds —
+          so a grade is defensible to a credit committee. The language models
+          never decide a number; they explain.
+        </p>
+        <p>
+          Free-form AI findings are funneled into a controlled business-state
+          vocabulary (expanding vs. shrinking, stable vs. volatile cash flow,
+          excess vs. low reserves, and so on). Those states feed a rules engine
+          that emits per-product fit on a "highly likely → highly unlikely"
+          scale, filtered to the products each institution is actually licensed
+          to sell.
+        </p>
+        <div class="callout green">
+          <p>
+            <strong>Why it matters:</strong> the output is auditable. Every grade
+            traces back to numbers and thresholds, and every product
+            recommendation traces back to a controlled state — not a sentence a
+            model happened to generate.
+          </p>
+        </div>
+      </section>
+
+      <!-- Workflows ------------------------------------------------------ -->
+      <section>
+        <h2>How it's used</h2>
+        <div class="persona-grid">
+          <div class="persona">
+            <h3>Reports</h3>
+            <p>Submit one business; get a scored, ~17-section report. Reports expire after 30 days and self-renew for active subscriptions.</p>
+          </div>
+          <div class="persona">
+            <h3>Pipelines</h3>
+            <p>Submit one address + business type; the platform auto-discovers comparable businesses, reports on each in parallel, then ranks and caps the top results.</p>
+          </div>
+          <div class="persona">
+            <h3>Watchlists</h3>
+            <p>Per-institution report lists with priority and subscription status, plus admin bulk-CSV upload that spawns a report per row.</p>
+          </div>
+        </div>
+        <p>
+          Multi-tenancy is enforced at the data layer: a user belongs to one
+          institution and can only ever retrieve that institution's data. Report
+          creation is metered against weekly limits, and an admin cost-analysis
+          view meters per-report model cost across tenants.
+        </p>
+      </section>
+
+      <!-- Honest framing ------------------------------------------------- -->
+      <section class="callout">
+        <p>
+          <strong>About this site.</strong> This was a real, revenue-bearing
+          platform built by a team — not a portfolio toy. I was the second-most
+          active engineer on it, owning the async report pipeline, the
+          geospatial analytics engine, entity resolution, model-cost tracking,
+          and the report-expiration/refresh subsystem, among other work. This
+          site documents what was actually shipped — the product here, the
+          engineering and the AI on the other pages. Company names and
+          identifying details have been removed; the system is described on its
+          own technical merits.
+        </p>
+      </section>
+
+      <footer class="site-footer">
+        <p>© Financial-Intelligence Platform · case study</p>
+        <div class="footer-links">
+          <a href="engineering.html">Engineering</a>
+          <a href="ai.html">AI</a>
+          <a href="https://github.com/bostondevelopment/">GitHub</a>
+          <a href="mailto:bostondevelopmentco@gmail.com">bostondevelopmentco@gmail.com</a>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>

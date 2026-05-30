@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Engineering — async pipelines, geospatial analytics, and data fusion at scale</title>
+    <meta
+      name="description"
+      content="How the platform is built: a service-oriented Django modular monolith with a multi-tier Celery fan-out/fan-in pipeline, a real PostGIS geospatial trade-area engine, ~10 external data integrations behind one abstraction, and production-grade observability."
+    />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <meta name="theme-color" content="#0D1B2E" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page wide">
+      <nav class="site-nav" aria-label="Primary">
+        <a class="nav-brand" href="index.html" aria-label="Home">
+          <span class="brand-mark">FI<span class="dot">.</span></span>
+          <span class="brand-text">Financial-Intelligence Platform</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Product</a>
+          <a href="engineering.html" class="active">Engineering</a>
+          <a href="ai.html">AI</a>
+        </div>
+      </nav>
+
+      <header>
+        <p class="kicker">Portfolio · Technical deep dive</p>
+        <h1>Building the platform</h1>
+        <p class="page-lede">
+          A service-oriented Django modular monolith that fuses four hard
+          problem domains in one backend: multi-provider LLM orchestration, a
+          distributed async pipeline, a real geospatial analytics engine, and
+          broad data integration with cross-source entity resolution. Here's
+          what's inside and why it's built this way.
+        </p>
+      </header>
+
+      <!-- Stat grid ------------------------------------------------------ -->
+      <section>
+        <div class="stat-grid">
+          <div class="stat">
+            <span class="stat-num">~40K</span>
+            <span class="stat-label">Lines of Python across a genuine analytical domain — not CRUD scaffolding</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">~36</span>
+            <span class="stat-label">Domain models · ~98 migrations of continuous schema evolution</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">~21</span>
+            <span class="stat-label">Celery task modules in a multi-tier fan-out / fan-in canvas</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">~10</span>
+            <span class="stat-label">Heterogeneous external sources unified behind one retriever abstraction</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">~15</span>
+            <span class="stat-label">Distinct schema-validated generative analyses with a token-level cost ledger</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">PostGIS</span>
+            <span class="stat-label">First-class geometry — trade-area polygons synthesized from mobility data</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tech stack ----------------------------------------------------- -->
+      <section class="card">
+        <h2>Tech stack</h2>
+        <p>
+          A modern, pragmatic Python stack chosen for breadth: a transactional
+          web tier, a distributed task tier, a geospatial database, and a
+          data-science analytics package — all in one navigable monorepo.
+        </p>
+
+        <div class="stack-group">
+          <h3>Core</h3>
+          <div class="tech-tags">
+            <span class="tech-tag">Python 3.12</span>
+            <span class="tech-tag">Django 5.1 / DRF</span>
+            <span class="tech-tag">PostgreSQL + PostGIS</span>
+            <span class="tech-tag">psqlextra</span>
+            <span class="tech-tag">Poetry</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <h3>Async &amp; infra</h3>
+          <div class="tech-tags">
+            <span class="tech-tag">Celery</span>
+            <span class="tech-tag">Redis (broker + backend)</span>
+            <span class="tech-tag">Gunicorn + gevent</span>
+            <span class="tech-tag">Flower</span>
+            <span class="tech-tag">Docker Compose</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <h3>Geospatial &amp; data science</h3>
+          <div class="tech-tags">
+            <span class="tech-tag">GeoDjango</span>
+            <span class="tech-tag">Shapely</span>
+            <span class="tech-tag">geopandas / pyogrio</span>
+            <span class="tech-tag">scikit-learn (DBSCAN)</span>
+            <span class="tech-tag">alphashape</span>
+            <span class="tech-tag">SciPy (B-splines)</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <h3>Auth, ops &amp; quality</h3>
+          <div class="tech-tags">
+            <span class="tech-tag">Auth0 + Authlib (RS256 JWT)</span>
+            <span class="tech-tag">statsd metrics</span>
+            <span class="tech-tag">Structured JSON logging</span>
+            <span class="tech-tag">Ruff (~45 rule families)</span>
+            <span class="tech-tag">pytest + factory-boy</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- The async DAG -------------------------------------------------- -->
+      <section>
+        <h2>The async pipeline</h2>
+        <p>
+          The defining piece of distributed-systems work: a multi-tier Celery
+          canvas over Redis with reliability and observability pushed down to
+          per-task decorators. Results aren't passed via in-memory handles —
+          every stage writes status to Postgres and clients poll, which is the
+          right model for a long, fan-out workload with a progressive-fill UI.
+        </p>
+
+        <div class="diagram">
+          <p class="diagram-cap">Fan-out / fan-in · three tiers</p>
+          <div class="dag">
+            <div class="rung-label">tier 1 · chord header</div>
+            <div class="rung">
+              <div class="node accent"><b>Discover candidates</b><small>chord(tasks)(finalize.s)</small></div>
+            </div>
+            <div class="connector">↓ fan out N candidates in parallel ↓</div>
+            <div class="rung-label">tier 2 · per-candidate chain</div>
+            <div class="fan">
+              <div class="node"><b>Candidate A</b><small>classify → normalize → build</small></div>
+              <div class="node"><b>Candidate B</b><small>classify → normalize → build</small></div>
+              <div class="node"><b>Candidate …N</b><small>classify → normalize → build</small></div>
+            </div>
+            <div class="connector">↓ each runs an inner barrier ↓</div>
+            <div class="rung-label">tier 3 · group → score barrier</div>
+            <div class="rung">
+              <div class="node green"><b>group(sections)</b><small>immutable=True</small></div>
+              <span class="connector" style="padding:0 4px">→</span>
+              <div class="node green"><b>score.s()</b><small>runs only after all persist</small></div>
+            </div>
+            <div class="connector">↓ chord body fires once all return ↓</div>
+            <div class="rung">
+              <div class="node accent"><b>Finalize status</b><small>derive from children · rank · order</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="engine">
+          <span class="engine-num">Why it's hard</span>
+          <h3>Picking the right primitive per stage</h3>
+          <p>
+            The inner <code>chain(group(parallel_tasks, immutable=True),
+            score.s())</code> guarantees every enrichment section persists before
+            scoring runs — a clean chord-style barrier over heterogeneous tasks.
+            Finalization <em>derives</em> terminal status from child reports
+            (a no-op while any child is still pending, so it's race-safe), then
+            ranks survivors and assigns order.
+          </p>
+        </div>
+        <div class="engine">
+          <span class="engine-num">Reliability engineering</span>
+          <h3>At-least-once, idempotent, row-locked</h3>
+          <p>
+            Nearly every task is <code>acks_late</code> with bounded retries, so
+            redelivery survives worker crashes. Idempotency is pervasive: entry
+            tasks short-circuit on terminal or in-progress status, and creation
+            paths use <code>select_for_update</code> + <code>get_or_create</code>
+            catching unique-violation races. Control tasks revoke-on-error to
+            prevent retry storms, and a single failed report degrades rather than
+            failing the whole pipeline.
+          </p>
+        </div>
+      </section>
+
+      <!-- Geospatial engine ---------------------------------------------- -->
+      <section>
+        <h2>The geospatial trade-area engine</h2>
+        <p>
+          The standout analytical subsystem. It synthesizes a customer-catchment
+          polygon from raw mobility data — a real signal-processing and
+          computational-geometry pipeline, not a thin API wrapper — and persists
+          the result as a PostGIS multipolygon.
+        </p>
+        <div class="diagram">
+          <p class="diagram-cap">Mobility data → smoothed catchment polygon</p>
+          <div class="flow">
+            <div class="step"><b>Core selection</b><small>haversine-sorted block groups</small></div>
+            <span class="arrow">→</span>
+            <div class="step"><b>DBSCAN</b><small>drop outliers, adaptive radius</small></div>
+            <span class="arrow">→</span>
+            <div class="step"><b>Union + hull</b><small>alphashape concave hull</small></div>
+            <span class="arrow">→</span>
+            <div class="step"><b>B-spline smooth</b><small>periodic spline + make_valid</small></div>
+            <span class="arrow">→</span>
+            <div class="step"><b>PostGIS</b><small>MultiPolygon persisted</small></div>
+          </div>
+        </div>
+        <p>
+          Block-group geometries load from Census TIGER shapefiles via
+          geopandas/pyogrio, with explicit handling for Connecticut's 2020→2022
+          planning-region GEOID remapping. A separate seasonality score uses
+          polynomial-smoothed weekly footfall with erf-scaled normalization.
+        </p>
+      </section>
+
+      <!-- Data model & integrations -------------------------------------- -->
+      <section class="card">
+        <h2>Domain &amp; data model</h2>
+        <p>
+          ~36 models and ~98 migrations built around two hubs — a
+          <code>Company</code> and a <code>Report</code> — with a deliberate,
+          consistent modeling discipline.
+        </p>
+        <ul>
+          <li>
+            <strong>Explicit through-models everywhere.</strong> Every domain
+            many-to-many carries data on the relationship itself — classification
+            role, ownership/title, competitor distance, pipeline tier/order,
+            debtor vs. secured-party — rather than bare many-to-many fields.
+          </li>
+          <li>
+            <strong>A shared abstract base</strong> gives every entity a UUID
+            primary key plus created/updated audit timestamps.
+          </li>
+          <li>
+            <strong>Real geometry &amp; advanced Postgres.</strong> PostGIS
+            across locations, regions, and trade areas; JSON and array fields;
+            12 multi-column unique constraints; partial/composite indexes; and
+            custom managers running window-function YoY-growth and
+            location-quotient queries.
+          </li>
+          <li>
+            <strong>A separate ~230-column firmographics feed</strong> modeled
+            in its own app and bridged into core models with type-coercion
+            guards.
+          </li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>~10 integrations behind one abstraction</h2>
+        <p>
+          Each external source sits behind a uniform retriever/service interface
+          with its own retry, logging, and API-cost accounting — firmographics
+          and financials, behavioral foot traffic, search and news, corporate
+          officers, Census/ACS, BLS/BEA economics, geocoding, and cloud storage.
+        </p>
+        <ul>
+          <li>
+            <strong>Async job lifecycle.</strong> The foot-traffic integration
+            builds a geofence, submits an async report job, and polls to
+            completion with linear backoff — accounting for data lag and
+            latest-complete-quarter logic.
+          </li>
+          <li>
+            <strong>Fuzzy cross-source entity resolution.</strong> A
+            normalization layer (business-suffix stripping, address
+            canonicalization, Unicode cleanup) feeds fuzzy matching that
+            converges heterogeneous sources onto one canonical company or person.
+          </li>
+          <li>
+            <strong>Multi-state public-records ingestion.</strong> A scraper
+            fleet behind a dispatcher (clean APIs where they exist, browser
+            automation where they don't) normalizes secured-loan filings and
+            derives the engagement windows the product is built around.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Infra / observability / testing -------------------------------- -->
+      <section class="card">
+        <h2>Infrastructure, observability &amp; testing</h2>
+        <ul>
+          <li>
+            <strong>Containerized GIS stack.</strong> A slim Python image builds
+            the full GDAL/GEOS/PROJ toolchain, runs as a non-root user, and bakes
+            in commit/branch build args for traceability. Compose orchestrates
+            web, Redis, Celery (3 replicas), Flower, and a PostGIS database with
+            health-gated startup ordering.
+          </li>
+          <li>
+            <strong>End-to-end request correlation.</strong> A request ID is
+            threaded from HTTP through middleware into Celery task headers and
+            JSON logs. A custom Slack handler posts Block-Kit error alerts with
+            IDs, tracebacks, and auto-generated cloud-logging deep links; a statsd
+            client emits request and task-lifecycle metrics.
+          </li>
+          <li>
+            <strong>Marker-driven test pyramid.</strong> pytest with seven
+            markers and <code>-m "not external"</code> by default, so CI never
+            hits paid model or data APIs; factory-boy + Faker factories and mock
+            fixtures back ~30 test files across models, views, tasks, and
+            analytics.
+          </li>
+          <li>
+            <strong>A codified quality bar.</strong> Ruff with ~45 rule families
+            — including bandit security scanning, bugbear, timezone-aware
+            datetime checks, and a McCabe complexity ceiling — enforced by a
+            pre-commit hook and in CI.
+          </li>
+        </ul>
+      </section>
+
+      <!-- My contributions ----------------------------------------------- -->
+      <section>
+        <h2>What I owned</h2>
+        <p>
+          I was the second-most active engineer on the platform. The work below
+          is mine, defensible from the commit history:
+        </p>
+        <div class="engine green">
+          <span class="engine-num">Async pipeline</span>
+          <h3>The fan-out / fan-in report DAG</h3>
+          <p>
+            Architected the multi-tier Celery canvas — the outer chord over
+            candidates, per-candidate chains, and the immutable group→score
+            barrier — with at-least-once delivery, bounded retries, and
+            idempotent row-locked writes.
+          </p>
+        </div>
+        <div class="engine green">
+          <span class="engine-num">Geospatial</span>
+          <h3>The trade-area analytics engine</h3>
+          <p>
+            Built the catchment-polygon pipeline (DBSCAN outlier clustering →
+            alphashape concave hull → periodic B-spline smoothing → PostGIS), and
+            added an erf-scaled seasonality score from 52-week footfall signals.
+          </p>
+        </div>
+        <div class="engine green">
+          <span class="engine-num">Data quality</span>
+          <h3>Company/person entity resolution under concurrency</h3>
+          <p>
+            Normalization plus fuzzy matching across sources, resolved under
+            <code>select_for_update</code> + <code>get_or_create</code> with
+            explicit integrity-error handling, so concurrent workers converge on
+            one canonical row — the duplicate-company hotfix.
+          </p>
+        </div>
+        <div class="engine green">
+          <span class="engine-num">FinOps &amp; lifecycle</span>
+          <h3>Cost tracking, audit trail &amp; report refresh</h3>
+          <p>
+            Token-level model-cost tracking into a polymorphic usage log plus an
+            archival audit trail; and a report-expiration and subscription-refresh
+            subsystem with vintage grace-window logic that auto-regenerates stale
+            reports and notifies subscribers.
+          </p>
+        </div>
+        <p>
+          Alongside that: a Django 5.1 / Python 3.12 upgrade, the strict Ruff
+          ruleset and test harness, production observability (the Slack handler,
+          statsd client, and request-ID propagation), and a pipeline-latency pass
+          that returned the API response before the async chain runs and killed
+          N+1 queries with <code>select_related</code>.
+        </p>
+      </section>
+
+      <!-- Closing -------------------------------------------------------- -->
+      <section class="closing">
+        <h2>What this proves</h2>
+        <p>
+          This is a revenue-bearing system with operational maturity most
+          backends lack — and the genuinely hard parts are the interesting ones:
+          choosing the right async primitive per stage, derive-status-from-children
+          finalization that's race-safe, at-least-once semantics with idempotent
+          writes, fuzzy entity resolution across ~10 sources, and a real
+          geospatial engine composing clustering, concave hulls, and spline
+          smoothing into PostGIS geometry. Those fundamentals are exactly what I'd
+          apply today.
+        </p>
+        <div class="contact-row">
+          <a href="https://github.com/bostondevelopment/">github.com/bostondevelopment</a>
+          <a href="mailto:bostondevelopmentco@gmail.com">bostondevelopmentco@gmail.com</a>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <p>© Financial-Intelligence Platform · case study</p>
+        <div class="footer-links">
+          <a href="index.html">Product</a>
+          <a href="ai.html">AI</a>
+          <a href="https://github.com/bostondevelopment/">GitHub</a>
+          <a href="mailto:bostondevelopmentco@gmail.com">bostondevelopmentco@gmail.com</a>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>

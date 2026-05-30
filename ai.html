@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI engineering — constrained generation, structured output, and a cost-and-audit ledger</title>
+    <meta
+      name="description"
+      content="The AI inside the platform: ~15 schema-validated generative analyses with capability-based multi-provider routing, Pydantic + Guardrails structured output, a compositional prompt-engineering system, retrieval grounding, and a token-level cost ledger with a full prompt/IO audit trail."
+    />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <meta name="theme-color" content="#0D1B2E" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page wide">
+      <nav class="site-nav" aria-label="Primary">
+        <a class="nav-brand" href="index.html" aria-label="Home">
+          <span class="brand-mark">FI<span class="dot">.</span></span>
+          <span class="brand-text">Financial-Intelligence Platform</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Product</a>
+          <a href="engineering.html">Engineering</a>
+          <a href="ai.html" class="active">AI</a>
+        </div>
+      </nav>
+
+      <header>
+        <p class="kicker">Portfolio · AI engineering</p>
+        <h1>The AI inside</h1>
+        <p class="page-lede">
+          The defining trait isn't a single clever prompt — it's
+          <em>breadth of constrained generation</em>. Around 15 distinct
+          analyses, each backed by an externalized prompt and a validated output
+          schema, with capability-based provider routing, a compositional prompt
+          system, and a token-level cost-and-audit ledger behind every call.
+        </p>
+      </header>
+
+      <!-- Stat grid ------------------------------------------------------ -->
+      <section>
+        <div class="stat-grid">
+          <div class="stat">
+            <span class="stat-num">~15</span>
+            <span class="stat-label">Distinct schema-validated generative analyses — every output a typed contract</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">2</span>
+            <span class="stat-label">Providers routed by capability — in-context reasoning vs. live web grounding</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">0</span>
+            <span class="stat-label">Temperature throughout — determinism over creativity for a lending product</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">3</span>
+            <span class="stat-label">Audit blobs archived per call — input, prompt, and output with citations + tokens</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Thesis: constrained generation --------------------------------- -->
+      <section>
+        <h2>Schema-first, not free text</h2>
+        <p>
+          Nearly every analysis defines a Pydantic schema wrapped in a guard, so
+          the model's output is a typed, validated contract before it can reach
+          the database. A hallucinated or malformed field is caught at the
+          boundary — only validated output is ever persisted.
+        </p>
+        <div class="diagram">
+          <p class="diagram-cap">Every analysis · the same safety boundary</p>
+          <div class="flow">
+            <div class="step"><b>Versioned prompt</b><small>loaded + formatted</small></div>
+            <span class="arrow">→</span>
+            <div class="step"><b>Model call</b><small>temperature = 0</small></div>
+            <span class="arrow">→</span>
+            <div class="step"><b>Guard + schema</b><small>Pydantic validation</small></div>
+            <span class="arrow">→</span>
+            <div class="step"><b>validated_output</b><small>only this is written</small></div>
+          </div>
+        </div>
+        <p>
+          The schemas are genuinely expressive: enum-constrained business-state
+          outcomes, fixed/variable and direct/indirect cost taxonomies, nested
+          polymorphic shapes (a customer-base report with optional
+          consumer/commercial/hybrid branches), URL validation on news links, and
+          a custom field validator with a negative-lookahead regex that
+          <em>rejects</em> outputs containing literal headers — pushing
+          formatting constraints into validation rather than into prose.
+        </p>
+      </section>
+
+      <!-- Multi-provider routing ----------------------------------------- -->
+      <section>
+        <h2>Capability-based provider routing</h2>
+        <p>
+          Two providers, routed by what the task actually needs — reasoning over
+          in-hand context, or live web retrieval. Models are aliased for
+          indirection so a routing decision isn't hard-coded to a vendor string.
+        </p>
+        <div class="diagram">
+          <p class="diagram-cap">Route by capability, not by habit</p>
+          <div class="node-grid">
+            <div class="node accent">
+              <b>In-context reasoning</b>
+              <small>summarization · classification · structured cost &amp; risk analyses</small>
+            </div>
+            <div class="node green">
+              <b>Web-grounded retrieval</b>
+              <small>owner profiles · customer base · regulatory · news</small>
+            </div>
+          </div>
+        </div>
+        <p>
+          The web-grounded path surfaces citations and a per-call response cost,
+          both of which are stitched back into every result and the cost ledger.
+        </p>
+      </section>
+
+      <!-- Structured generation patterns --------------------------------- -->
+      <section>
+        <h2>Two structured-generation patterns</h2>
+        <div class="engine">
+          <span class="engine-num">Pattern 01 · Guard as validator</span>
+          <h3>Validate over the web-grounded client</h3>
+          <p>
+            For retrieval tasks the guard wraps the retriever call and returns
+            validated output — live web answers are forced to conform to the
+            schema before anything downstream sees them.
+          </p>
+        </div>
+        <div class="engine">
+          <span class="engine-num">Pattern 02 · Function-calling</span>
+          <h3>Schema-as-tool, forced tool choice</h3>
+          <p>
+            For in-context tasks the schema is compiled into a function-calling
+            tool with required tool choice, so the model must return a structured
+            object rather than prose. Same guarantee, different mechanism — chosen
+            per provider.
+          </p>
+        </div>
+      </section>
+
+      <!-- Prompt engineering system -------------------------------------- -->
+      <section>
+        <h2>A real prompt-engineering system</h2>
+        <p>
+          Prompts are fully externalized as a versioned markdown library, loaded
+          by a one-line helper with string-format injection — not string
+          literals scattered through the code. The library is
+          <span class="accent-b">scenario-branched</span>: owner-profile selects
+          with/without-name variants; customer base selects
+          consumer/commercial/hybrid; cost-driver and regulatory carry
+          default/full/simple versions.
+        </p>
+        <div class="diagram">
+          <p class="diagram-cap">Compositional assembly · the risk-and-opportunity analysis</p>
+          <div class="dag">
+            <div class="rung-label">fragments · rendered individually</div>
+            <div class="fan cols-4">
+              <div class="node"><b>economic</b></div>
+              <div class="node"><b>industry</b></div>
+              <div class="node"><b>review</b></div>
+              <div class="node"><b>competitor</b></div>
+            </div>
+            <div class="fan cols-4">
+              <div class="node"><b>customer base</b></div>
+              <div class="node"><b>sentiment</b></div>
+              <div class="node"><b>seasonality</b></div>
+              <div class="node"><small>…</small></div>
+            </div>
+            <div class="connector">↓ nested into a master chain-of-thought template ↓</div>
+            <div class="rung">
+              <div class="node accent"><b>One assembled prompt</b><small>schema-validated output</small></div>
+            </div>
+          </div>
+        </div>
+        <p>
+          A subtle but important touch: numeric features are first mapped to
+          ordinal English descriptors — "robust positive growth", "severe
+          contraction" — via lookup tables before injection, so the model reasons
+          over qualitative language rather than raw floats.
+        </p>
+      </section>
+
+      <!-- Retrieval & grounding ------------------------------------------ -->
+      <section class="card">
+        <h2>Retrieval &amp; grounding</h2>
+        <p>
+          A clean strategy/factory pattern abstracts retrieval behind one
+          interface with several concrete strategies (in-context, web-grounded,
+          search with pagination + recency stop-criteria, and a news API).
+        </p>
+        <ul>
+          <li>
+            <strong>Three-source parallel news fan-out</strong> across a
+            documented fallback chain, run concurrently with a thread pool, full-text
+            scraping each article.
+          </li>
+          <li>
+            <strong>Scored, not just retrieved.</strong> Each article gets a 1–5
+            sentiment score with rationale and a yes/no relevance classification
+            against a schema — supporting adverse-media due diligence.
+          </li>
+          <li>
+            <strong>Citations stitched through</strong> every web-grounded result
+            so a claim can be traced back to a source.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Observability / FinOps ----------------------------------------- -->
+      <section>
+        <h2>Observability &amp; FinOps</h2>
+        <p>
+          Two layers make the AI auditable and its unit economics legible — the
+          part that turns a demo into a production system.
+        </p>
+        <div class="engine green">
+          <span class="engine-num">Audit trail</span>
+          <h3>Full prompt/IO lineage to cloud storage</h3>
+          <p>
+            A decorator captures the in-scope prompt and writes three blobs per
+            call — input, prompt, and output with citations and token usage —
+            under a company/date/task path. Every generation is reproducible
+            after the fact.
+          </p>
+        </div>
+        <div class="engine green">
+          <span class="engine-num">Cost ledger</span>
+          <h3>Per-report unit economics</h3>
+          <p>
+            Every call emits a usage-log row (a generic foreign key to the report
+            or pipeline, with token counts) and the system computes per-report and
+            per-pipeline average cost and monthly trends against a rate card —
+            token-level FinOps, not a monthly vendor invoice.
+          </p>
+        </div>
+      </section>
+
+      <!-- Closing -------------------------------------------------------- -->
+      <section class="closing">
+        <h2>Why this is the production pattern</h2>
+        <p>
+          Schema-first discipline at scale, compositional multi-fragment prompt
+          assembly, capability-based provider routing, a tracing-based prompt/IO
+          audit trail, and a token-level cost ledger — with the deterministic
+          scoring kept deliberately separate so the AI explains while math
+          decides. That separation, and the validation boundary around every
+          generation, is what makes model output safe to put in front of a credit
+          committee.
+        </p>
+        <div class="contact-row">
+          <a href="https://github.com/bostondevelopment/">github.com/bostondevelopment</a>
+          <a href="mailto:bostondevelopmentco@gmail.com">bostondevelopmentco@gmail.com</a>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <p>© Financial-Intelligence Platform · case study</p>
+        <div class="footer-links">
+          <a href="index.html">Product</a>
+          <a href="engineering.html">Engineering</a>
+          <a href="https://github.com/bostondevelopment/">GitHub</a>
+          <a href="mailto:bostondevelopmentco@gmail.com">bostondevelopmentco@gmail.com</a>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
